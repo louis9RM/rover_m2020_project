@@ -1,0 +1,21 @@
+%----------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------
+\doublespacing
+
+\chapter{Arquitectura Conceptual de la Solución}
+
+El presente capítulo introduce la propuesta arquitectónica de alto nivel que constituye el aporte central de esta investigación. Se describe el enfoque conceptual adoptado para resolver el problema de la dependencia tecnológica en la navegación de robots móviles.
+
+\section{Arquitectura Conceptual Propuesta}
+
+La solución plantea un diseño modular que permite separar la inteligencia del robot de las herramientas de simulación utilizadas. En lugar de construir el software como un bloque único dependiente de tecnologías específicas, se propone una organización basada en la separación de responsabilidades.
+
+Conceptualmente, el sistema se divide en dos componentes principales:
+
+\begin{enumerate}
+    \item \textbf{El Núcleo de Navegación:} Representa la lógica central del robot. Es el encargado de procesar la información del entorno y tomar decisiones de movimiento para alcanzar un objetivo. Este componente opera de manera independiente y no requiere conocer los detalles técnicos del simulador o del hardware subyacente.
+    
+    \item \textbf{La Capa de Adaptación:} Funciona como un intermediario entre el núcleo y el entorno de simulación. Su tarea consiste en traducir las señales de los sensores y los comandos de movimiento a un formato estándar que el núcleo pueda interpretar. Esto permite conectar el sistema de navegación a diferentes entornos, como Gazebo o Isaac Sim, sin necesidad de modificar el código principal.
+\end{enumerate}
+
+Este diseño asegura que la lógica de navegación se mantenga intacta al cambiar de plataforma de simulación protegiendo la inversión de desarrollo y facilitando la portabilidad del sistema.

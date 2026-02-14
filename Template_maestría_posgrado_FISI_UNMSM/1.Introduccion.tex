@@ -1,0 +1,115 @@
+% ===========================
+% 1.Introduccion.tex
+% ===========================
+\chapter{Introducción}
+
+\section{Situación problemática}
+
+
+% Si su plantilla ya numera las subsecciones, use \subsection en lugar de \subsection*
+% Si no, use \subsection*{} para el subtítulo.
+
+En la actualidad, el desarrollo de sistemas robóticos autónomos ha encontrado en el framework Robot Operating System 2 (ROS 2) un estándar de facto, gracias a su capacidad de comunicación distribuida y soporte para tiempo real. Sin embargo, a pesar de estas ventajas operativas, el ecosistema de ROS 2 presenta un desafío arquitectónico significativo: el alto acoplamiento entre la lógica de control del robot (algoritmos de navegación, planificación y decisión) y los detalles de implementación de la infraestructura, como sensores específicos, actuadores o entornos de simulación. Es común observar que los nodos de ROS 2 se desarrollan con dependencias directas a mensajes y tipos de datos propietarios de simuladores tradicionales como Gazebo, lo que genera una rigidez estructural conocida como "vendor lock-in".
+
+Esta dependencia tecnológica se vuelve crítica ante la emergencia de nuevos entornos de simulación de alta fidelidad, como NVIDIA Isaac Sim, que ofrecen físicas más realistas y capacidades de renderizado fotorealista necesarias para la validación avanzada de algoritmos. Cuando un investigador o ingeniero intenta migrar un sistema robótico funcional desde un entorno estándar hacia estos nuevos simuladores, se enfrenta a la necesidad de refactorizar gran parte del código fuente, ya que la lógica de negocio se encuentra entremezclada con las llamadas a la API del simulador original. Esta falta de portabilidad no solo incrementa los tiempos y costos de desarrollo, sino que también limita la capacidad de validar el comportamiento del robot en escenarios diversos sin comprometer la integridad de los algoritmos de control.
+
+Ante esta problemática, surge la necesidad de adoptar patrones de diseño de software maduros que promuevan la independencia tecnológica. La Arquitectura Hexagonal, o patrón de Puertos y Adaptadores, se presenta como una solución viable para desacoplar el núcleo de decisión del robot de sus interfaces externas. Al aislar la lógica de dominio en el centro del diseño y manejar las interacciones con el mundo exterior (simuladores, hardware real) a través de adaptadores intercambiables, se teóricamente posible alcanzar un alto grado de portabilidad. No obstante, la aplicación de este patrón, originario del desarrollo de sistemas empresariales, al dominio de la robótica con sus restricciones de tiempo real y comunicación asíncrona, no ha sido suficientemente explorada ni estandarizada, dejando un vacío de conocimiento sobre cómo estructurar eficazmente estos sistemas para garantizar su interoperabilidad entre entornos de simulación dispares. 
+
+
+
+
+
+
+
+\section{Formulación del Problema}
+
+\subsection{Problema general}
+% Párrafo introductorio que resume la problemática de la 1.1 (su tesis) y enlaza con la pregunta.
+
+La situación descrita evidencia una limitación crítica en el desarrollo actual de robótica con ROS 2: la dependencia tecnológica hacia herramientas de simulación específicas genera un alto acoplamiento que impide la migración fluida hacia entornos más avanzados. Esta rigidez arquitectónica obliga a los desarrolladores a reescribir componentes fundamentales del software cada vez que se requiere validar el sistema en una nueva plataforma, afectando directamente la portabilidad y la eficiencia del ciclo de desarrollo.
+
+A partir de esta problemática, se plantea la siguiente pregunta de investigación:
+
+\medskip
+
+\noindent\textbf{¿En qué medida la adaptación de la Arquitectura Hexagonal mejora la portabilidad de sistemas robóticos en ROS 2 al migrar entre entornos de simulación dispares?}
+
+
+\subsection{Problemas específicos}
+\begin{enumerate}
+    \item ¿De qué manera se debe estructurar la lógica de dominio de los sistemas robóticos para garantizar su total desacoplamiento del middleware ROS 2 y de las interfaces propietarias de simulación?
+    \item ¿Cómo se deben implementar los adaptadores de infraestructura para permitir la interoperabilidad de los sistemas robóticos tanto en simuladores estándar (Gazebo) como de alta fidelidad (Isaac Sim) sin alterar el núcleo del software?
+    \item ¿Qué métricas de ingeniería de software permiten cuantificar objetivamente la mejora en la portabilidad y la reducción del acoplamiento al aplicar la Arquitectura Hexagonal en comparación con arquitecturas tradicionales en ROS 2?
+\end{enumerate}
+
+
+
+\section{Justificación}
+
+\subsection{Justificación Teórica}
+
+La investigación se fundamenta en los principios de diseño de software de Desacoplamiento e Inversión de Dependencias (DIP) propuestos por la Arquitectura Hexagonal. Teóricamente, al aislar la lógica de dominio (el "qué" hace el robot) de los detalles de implementación (el "cómo" se comunica o simula), se establece un modelo donde el núcleo del sistema es agnóstico a la tecnología subyacente. Esto contribuye al cuerpo de conocimiento de la Ingeniería de Software aplicada a la Robótica, demostrando cómo patrones arquitectónicos avanzados pueden resolver problemas de rigidez estructural inherentes al desarrollo tradicional con middlewares como ROS 2.
+
+
+\subsection{Justificación Práctica}
+
+En el ámbito aplicativo, esta arquitectura permite a los ingenieros y desarrolladores robóticos migrar sus soluciones entre diferentes entornos de validación —desde simuladores ligeros como Gazebo hasta entornos fotorealistas como Isaac Sim— sin la necesidad de refactorizar el código fuente del comportamiento del robot. Esto reduce drásticamente los tiempos de re-implementación y los riesgos de introducir errores durante la migración experimental. Además, facilita la prueba de algoritmos en múltiples escenarios de simulación, aumentando la robustez y confiabilidad del software antes de su despliegue en hardware físico.
+
+
+
+\section{Objetivos}
+
+
+\subsection{Objetivo General}
+% El objetivo general debe ser el fin deseado (la mejora en la mantenibilidad), no la acción de implementar.
+
+El objetivo general del presente trabajo de investigación es:
+
+Determinar en qué medida la adaptación de la Arquitectura Hexagonal mejora la portabilidad de sistemas robóticos en ROS 2 al migrar entre entornos de simulación dispares.
+
+
+\subsection{Objetivos Específicos}
+% Cada objetivo específico debe ser un subproducto verificable que desglosa la mejora en la mantenibilidad.
+
+Los objetivos específicos, alineados con las preguntas de investigación, son:
+
+\begin{enumerate}
+    \item Diseñar una estructura de software para el dominio del sistema robótico que garantice su independencia del middleware ROS 2 y de las interfaces propietarias de simulación.
+    % Amarrado a: Problema Específico 1
+    
+    \item Implementar adaptadores de infraestructura que permitan la interoperabilidad del sistema robótico tanto en simuladores estándar (Gazebo) como de alta fidelidad (Isaac Sim) sin alterar el núcleo del software.
+    % Amarrado a: Problema Específico 2
+    
+    \item Evaluar la mejora en la portabilidad y la reducción del acoplamiento mediante métricas de ingeniería de software al comparar la solución propuesta frente a una arquitectura tradicional.
+    % Amarrado a: Problema Específico 3
+\end{enumerate}
+
+
+
+
+
+\section{Alcance y delimitación de la Investigación}
+
+\subsection{Alcances}
+
+Este estudio abarca el diseño, implementación y validación de una arquitectura de software basada en el patrón Hexagonal (Puertos y Adaptadores) aplicada a un sistema robótico móvil de tipo Rover. El alcance funcional se centra en un caso de uso de exploración y navegación autónoma en terreno irregular, donde el robot debe desplazarse desde un punto A hacia un punto B evadiendo obstáculos estáticos.
+
+La investigación comprende la construcción de un núcleo de software ("Core") en lenguaje C++ puro, totalmente desacoplado de frameworks externos. Para validar la portabilidad de este núcleo, se desarrollarán e integrarán adaptadores para dos entornos de simulación con características dispares: 
+\begin{itemize}
+    \item \textbf{Gazebo Classic/Ignition:} Representando el estándar actual de simulación en la industria y academia.
+    \item \textbf{NVIDIA Isaac Sim:} Representando la nueva generación de simuladores de alta fidelidad basados en física avanzada y renderizado fotorealista (USD).
+\end{itemize}
+
+El análisis se limitará a comparar el grado de acoplamiento estructural y la equivalencia funcional del comportamiento del robot en ambos simuladores utilizando el mismo código binario para la lógica de navegación.
+
+\subsection{Delimitaciones}
+
+Para garantizar la viabilidad del proyecto dentro de un cronograma de cuatro meses, se establecen las siguientes restricciones:
+\begin{itemize}
+    \item \textbf{Validación Sim-to-Sim:} No se realizarán pruebas en hardware físico real. La validación se restringe exclusivamente al entorno virtual.
+    \item \textbf{Percepción Simplificada:} El sistema de percepción utilizará datos de sensores simulados (LIDAR/Cámaras de profundidad) procesados geométricamente. No se incluyen en el alcance el desarrollo de nuevos modelos de visión artificial profunda (Deep Learning) ni SLAM complejo, salvo el uso de librerías estándar ya existentes si fueran necesarias.
+    \item \textbf{Infraestructura de Despliegue:} No se abordará la orquestación de contenedores (Docker/Kubernetes) ni despliegue en la nube, centrándose puramente en la arquitectura del código fuente y su compilación en un entorno Linux (Ubuntu) con la distribución ROS 2 Humble.
+    \item \textbf{Métricas de Rendimiento:} No es objetivo de esta tesis optimizar el consumo de CPU/GPU ni la latencia de red, sino validar la estructura y portabilidad del software.
+\end{itemize} 
+
+

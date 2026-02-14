@@ -1,0 +1,48 @@
+\marginsize{2.5cm}{2.5cm}{4.0cm}{2.5cm}
+\renewcommand*{\contentsname}{Índice General}
+\renewcommand*{\listtablename}{Lista de Tablas}
+\renewcommand*{\listfigurename}{Lista de Figuras}
+\renewcommand{\baselinestretch}{1.0}
+\renewcommand{\appendixname}{Anexos}
+\renewcommand{\appendixtocname}{Anexos}
+\renewcommand{\appendixpagename}{Anexos}
+\renewcommand{\thetable}{\arabic{table}}
+\renewcommand*{\tablename}{Tabla}
+\newcommand{\thetablename}{Tabla}
+\renewcommand*{\chaptername}{Capítulo}
+\renewcommand*{\thechapter}{\Roman{chapter}}
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\renewcommand{\figurename}{Figura}
+\renewcommand{\thefigure}{\arabic{figure}}
+\renewcommand{\theequation}{\arabic{equation}}
+%\selectlanguage{spanish}
+\newgeometry{left=4.0cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\afterpage{\restoregeometry\clearpage}
+\captionsetup[table]{labelfont=bf, textfont=it, justification=RaggedRight, singlelinecheck=false, labelsep=newline}
+\captionsetup[figure]{labelfont=bf, textfont=it, justification=RaggedRight, singlelinecheck=false, labelsep=newline}
+\counterwithout{table}{chapter}
+\counterwithout{figure}{chapter}
+\pagestyle{fancyplain}% <- use fancyplain instead fancy
+\fancyhf{}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+%\renewcommand{\cfttabaftersnum}{.}
+%\cftsetindents{table}{0pt}{4.0em}
+%\renewcommand{\cft}{Tabla~}
+%\renewcommand{\cfttabpresnum}{Tabla }
+\renewcommand{\BOthers}[1]{et al.\hbox{}}
+
+\renewcommand\cftfigpresnum{\bfseries\figurename~}
+\renewcommand\cftfigaftersnum{.}
+\setlength\cftfignumwidth{5em}
+
+\renewcommand\cfttabpresnum{\bfseries\thetablename~}
+\renewcommand\cfttabaftersnum{.}
+\setlength\cfttabnumwidth{5em}
+
+% --- enumerando subsecciones
+\setcounter{secnumdepth}{3}
+\setcounter{secnumdepth}{4}
+\setcounter{secnumdepth}{5}
+% end

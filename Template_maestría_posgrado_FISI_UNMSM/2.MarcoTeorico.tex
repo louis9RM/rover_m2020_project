@@ -1,0 +1,162 @@
+%----------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------
+\doublespacing
+
+\chapter{Marco Teórico}
+
+El presente capítulo aborda los fundamentos conceptuales y el estado actual del conocimiento relacionado con la investigación. En primer lugar, se presentan los antecedentes, donde se revisan estudios previos vinculados a la arquitectura de software en robótica, la interoperabilidad entre simuladores y la portabilidad de sistemas autónomos en ROS 2. El propósito es identificar los enfoques arquitectónicos predominantes, sus limitaciones respecto al acoplamiento tecnológico y las brechas existentes que dificultan la migración entre entornos de simulación.
+
+Posteriormente, se desarrolla el marco teórico, describiendo en profundidad los conceptos que sustentan la propuesta: el atributo de calidad de Portabilidad según la norma ISO/IEC 25010, los principios de la Arquitectura Hexagonal (Puertos y Adaptadores) y su aplicación para desacoplar la lógica de navegación de los detalles de infraestructura. Asimismo, se detallan las herramientas tecnológicas críticas para la investigación, incluyendo el middleware ROS 2, los motores de física de Gazebo e Isaac Sim, y los estándares de descripción de robots (URDF/USD). Este análisis proporciona la base sólida necesaria para justificar el diseño de los adaptadores y la validación experimental propuesta.
+
+\section{Antecedentes de la Investigación (Estado del Arte)}
+
+\noindent La revisión de la literatura se organiza en seis temáticas principales que agrupan los trabajos más relevantes para contextualizar el problema de la portabilidad en robótica.
+
+%=========================================================
+\subsection{Temática 1: Arquitecturas de Software Modulares en Robótica}
+%=========================================================
+% (Espacio para completar manualmente por el autor)
+
+%=========================================================
+\subsection{Temática 2: Patrones de Diseño para Desacoplamiento en ROS 2}
+%=========================================================
+% (Espacio para completar manualmente por el autor)
+
+%=========================================================
+\subsection{Temática 3: Interoperabilidad entre Simuladores Estándar y de Alta Fidelidad}
+%=========================================================
+% (Espacio para completar manualmente por el autor)
+
+%=========================================================
+\subsection{Temática 4: Migración de Sistemas Robóticos basada en Modelos (MDE)}
+%=========================================================
+% (Espacio para completar manualmente por el autor)
+
+%=========================================================
+\subsection{Temática 5: Validación de Algoritmos de Navegación en Entornos Virtuales}
+%=========================================================
+% (Espacio para completar manualmente por el autor)
+
+%=========================================================
+\subsection{Temática 6: Métricas de Calidad de Software aplicadas a Sistemas ROS}
+%=========================================================
+% (Espacio para completar manualmente por el autor)
+
+
+\bigskip
+
+\noindent La siguiente tabla sintetiza las diferencias estructurales entre los enfoques tradicionales encontrados en la literatura y la propuesta de Arquitectura Hexagonal de esta investigación, evaluados bajo criterios de portabilidad e independencia tecnológica.
+
+\begin{table}[h]
+    \small
+    \caption{\newline \textit{Comparativa de Enfoques Arquitectónicos para Portabilidad en Robótica con ROS 2}}
+    \label{tab:comparativa_enfoques_portabilidad}
+    \centering
+    \resizebox{\textwidth}{!}{%
+        \begin{tabular}{lccccc}
+            \toprule
+            \textbf{Enfoque Arquitectónico} &
+            \textbf{Desacoplamiento} &
+            \textbf{Indep.} &
+            \textbf{Indep. del} &
+            \textbf{Reuso de} &
+            \textbf{Interoperabilidad} \\
+            & \textbf{del Middleware} & \textbf{Simulador} & \textbf{Hardware} & \textbf{Código Binario} & \textbf{Gazebo / Isaac} \\
+            \midrule
+            Monolítico Tradicional &  &  &  &  &  \\
+            Basado en Nodos (ROS puro) &  & X & X &  & X \\
+            Basado en Componentes & X & X & X & X &  \\
+            Model-Driven Eng. (MDE) & X &  & X &  & X \\
+            Capas (Layered) & X & X &  & X &  \\
+            Orientado a Servicios (SOA) & X &  & X & X & X \\
+            \textbf{Arquitectura Hexagonal} & \textbf{X} & \textbf{X} & \textbf{X} & \textbf{X} & \textbf{X} \\
+            \bottomrule
+        \end{tabular}
+    }
+\end{table}
+
+La Tabla \ref{tab:comparativa_enfoques_portabilidad} evidencia que si bien existen enfoques como SOA o arquitecturas por capas que promueven cierto grado de independencia, la mayoría falla en garantizar una **Interoperabilidad Total** entre simuladores dispares (Gazebo vs Isaac Sim) sin requerir recompilación o modificación del código fuente. La Arquitectura Hexagonal propuesta cubre esta brecha al aislar completamente el núcleo matemático de navegación, permitiendo que los detalles de simulación sean inyectados como dependencias externas (adaptadores), logrando así la máxima puntuación en los criterios de portabilidad.
+
+%=========================================================
+\section{Bases Teóricas}
+%=========================================================
+
+\subsection{Arquitectura Hexagonal (Puertos y Adaptadores)}
+
+La Arquitectura Hexagonal, planteada por Alistair Cockburn, constituye un patrón de diseño estructural orientado a fomentar el desacoplamiento entre la lógica de negocio de una aplicación y los componentes externos que interactúan con ella, tales como interfaces de usuario, bases de datos o, en el dominio robótico, el hardware y los entornos de simulación.
+
+\subsubsection{Núcleo de la Aplicación (Dominio)}
+El componente central del patrón se denomina Dominio. En sistemas robóticos autónomos, este núcleo alberga la lógica fundamental de navegación y control, incluyendo algoritmos de evasión de obstáculos, planificación de trayectorias y leyes de control cinemático. Según los principios del patrón, este módulo se implementa de manera agnóstica a la tecnología subyacente, evitando dependencias directas de frameworks específicos o librerías de comunicación. Su responsabilidad principal reside en el procesamiento de datos abstractos del entorno para la generación de comandos de control.
+
+\subsubsection{Puertos (Ports)}
+Los puertos constituyen las interfaces que definen los límites del hexágono, estableciendo contratos de comunicación explícitos entre el dominio y los agentes externos. Se clasifican en dos categorías:
+\begin{itemize}
+    \item \textbf{Puertos Primarios (Driving Ports):} Corresponden a interfaces mediante las cuales los actores externos ejercen control sobre la aplicación. Definen los métodos de entrada para la activación de servicios de navegación o asignación de objetivos.
+    \item \textbf{Puertos Secundarios (Driven Ports):} Representan interfaces requeridas por la aplicación para obtener servicios o datos del entorno. A través de ellos, el dominio accede a la información sensorial o envía órdenes a los actuadores, manteniendo un desconocimiento total sobre la implementación concreta de dichos dispositivos.
+\end{itemize}
+
+\subsubsection{Adaptadores (Adapters)}
+Los adaptadores son componentes de software situados en la capa de infraestructura que implementan las interfaces definidas por los puertos. Su función es resolver la discrepancia de representación (impedance mismatch) entre el formato de datos externo y el modelo interno del dominio.
+\begin{itemize}
+    \item \textbf{Adaptadores de Simulación Estándar:} Se encargan de la traducción de mensajes provenientes de simuladores convencionales (como Gazebo) hacia las estructuras de datos del dominio.
+    \item \textbf{Adaptadores de Simulación de Alta Fidelidad:} Realizan la conversión de datos complejos, como descripciones de escena USD o física avanzada (Isaac Sim), al formato agnóstico requerido por el núcleo.
+\end{itemize}
+Esta separación permite la sustitución de entornos de ejecución sin necesidad de alterar el código fuente del dominio.
+
+\subsubsection{Principio de Inversión de Dependencias (DIP)}
+La Arquitectura Hexagonal se fundamenta en el Principio de Inversión de Dependencias, el cual establece que los módulos de alto nivel no deben depender de módulos de bajo nivel, sino de abstracciones. En la práctica, esto implica que durante el tiempo de compilación el dominio no presenta acoplamiento con el middleware robótico. La vinculación con las implementaciones concretas se realiza únicamente en tiempo de ejecución mediante mecanismos de inyección de dependencias.
+
+\subsection{Robot Operating System 2 (ROS 2 Humble)}
+
+\subsubsection{Middleware DDS (Data Distribution Service)}
+ROS 2 adopta el estándar DDS (Data Distribution Service) para la gestión de comunicaciones en tiempo real. Este middleware facilita el descubrimiento dinámico de nodos y el intercambio de datos mediante el modelo de publicación-suscripción. En arquitecturas desacopladas, DDS actúa como la capa de transporte que permite a los adaptadores recibir información sensorial. Su capacidad para configurar políticas de Calidad de Servicio (QoS) resulta crítica para garantizar la integridad y oportunidad de los datos en redes con restricciones de ancho de banda o latencia.
+
+\subsubsection{Gestión de Ciclo de Vida (Lifecycle Nodes)}
+El framework incorpora el concepto de nodos gestionados, los cuales operan bajo una máquina de estados finita (Unconfigured, Inactive, Active, Finalized). Esta característica permite una orquestación determinista del sistema, asegurando que la configuración de los adaptadores y la verificación de la conectividad con el entorno se completen antes de la activación de la lógica de control principal.
+
+\subsection{Entornos de Simulación Avanzada}
+
+\subsubsection{Gazebo Classic y plugins}
+Gazebo es una plataforma de simulación dinámica tridimensional ampliamente utilizada en la comunidad robótica. La descripción de los modelos físicos se realiza típicamente mediante el formato URDF (Unified Robot Description Format). La interacción con el middleware ROS se efectúa a través de plugins desarrollados en C++, los cuales acceden a la API física del simulador para publicar datos de sensores y suscribirse a comandos de actuación.
+
+\subsubsection{NVIDIA Isaac Sim y Omniverse}
+Isaac Sim representa una nueva generación de simuladores basados en la plataforma NVIDIA Omniverse, orientados a la escalabilidad y el fotorealismo.
+\begin{itemize}
+    \item \textbf{USD (Universal Scene Description):} Se emplea como formato nativo para la descripción de escenas y robots, permitiendo la composición jerárquica y no destructiva de entornos complejos.
+    \item \textbf{PhysX 5:} Motor de física de alta precisión utilizado para la simulación avanzada de dinámicas vehiculares y la interacción con terrenos irregulares.
+    \item \textbf{ROS 2 Bridge:} Mecanismo de integración que mapea directamente los datos internos de la simulación a mensajes DDS, optimizando el rendimiento en la transferencia de grandes volúmenes de datos sensoriales.
+\end{itemize}
+
+
+\subsection{Herramientas de Desarrollo y Compilación}
+
+\subsubsection{Lenguajes de Programación}
+\textbf{C++17:} Se selecciona como lenguaje preferente para la implementación de núcleos computacionales y adaptadores de alto rendimiento, debido a su gestión determinista de memoria y eficiencia en tiempo de ejecución.
+\textbf{Python 3:} Se utiliza comúnmente para la creación de scripts de automatización, orquestación de lanzamientos y análisis de datos post-procesamiento.
+
+\subsubsection{Sistema de Construcción (Build System)}
+\textbf{Colcon:} Herramienta de meta-construcción empleada para iterar sobre múltiples paquetes interdependientes.
+\textbf{Ament CMake:} Extensión del sistema CMake adaptada al entorno ROS 2, que facilita la gestión de dependencias y la generación de archivos de configuración.
+\textbf{CMake:} Sistema de compilación subyacente que permite configurar la independencia del dominio, asegurando que las librerías del núcleo no se vinculen con dependencias del middleware.
+
+%=========================================================
+\section{Definición de Términos Básicos}
+%=========================================================
+
+\textbf{Topic (Tópico):} Canal lógico de comunicación asíncrona sobre el cual se publican mensajes de datos en arquitecturas distribuidas.
+
+\textbf{Node (Nodo):} Unidad de ejecución fundamental en ROS 2 encargada de realizar una tarea computacional específica.
+
+\textbf{Middleware:} Capa de software que abstrae la complejidad del sistema operativo y la red, gestionando la comunicación entre componentes distribuidos.
+
+\textbf{USD (Universal Scene Description):} Formato de archivo de código abierto para la descripción e intercambio de escenas 3D complejas.
+
+\textbf{URDF (Unified Robot Description Format):} Estándar XML utilizado para la descripción cinemática y visual de robots.
+
+\textbf{Bridge (Puente):} Componente de software que interconecta dos protocolos o sistemas heterogéneos, permitiendo el intercambio bidireccional de información.
+
+\textbf{Impedancia (Software):} Medida de la dificultad o costo asociado a la adaptación de estructuras de datos o interfaces entre dos componentes tecnológicamente divergentes.
+
+\textbf{Sim-to-Real:} Desafío asociado a la transferencia de políticas de control validadas en entornos virtuales hacia plataformas físicas reales.
+
+\textbf{Vendor Lock-in:} Fenómeno de dependencia tecnológica que dificulta la migración hacia soluciones alternativas debido a altos costos de adaptación.

@@ -1,0 +1,253 @@
+%----------------------------------------------------------------------------------------
+
+%----------------------------------------------------------------------------------------
+\doublespacing
+
+\chapter{Resultados y Discusión}
+
+\section{Pruebas de hipótesis}
+
+Para verificar la hipótesis principal es necesario verificar las tres hipótesis específicas. Para ello, se llevaron a cabo pruebas de hipótesis estadísticas, donde para rechazar la hipótesis nula, el valor p debe ser inferior a 0.05.
+
+\subsection{Hipótesis específica: Hiperparámetros}
+
+Al aplicar la prueba de Shapiro-Wilk observamos, en la Tabla\ref{tab:shapiro_test_results_hp1}, que no todas las técnicas siguen una distribución normal, entonces aplicaremos la prueba de Friedman para  evaluar si hay diferencias significativas en los valores de RMSE entre las diferentes técnicas sin la necesidad de que los datos sigan una distribución normal tal como lo hacen los autores \cite{cleophas2016non}
+
+\begin{table}[h]
+\caption{Resultados del test de Shapiro-Wilk por técnica de hiperparámetros}
+\centering
+\begin{tabular}{rllrr}
+\hline
+Technique              & Variable & Statistic & P-value   \\ \hline
+Bayesian Optimization  & RMSE     & 0.965     & 0.757     \\ 
+Grid Search            & RMSE     & 0.905     & 0.0960    \\ 
+Random Search          & RMSE     & 0.814     & 0.00424   \\ \hline
+\end{tabular}
+\label{tab:shapiro_test_results_hp1}
+\end{table}
+\small\textit{Fuente:} Elaboración Propia
+
+Al usar la prueba de Friedman notamos, en la Tabla \ref{tab:friedman_test_results_hp1}, que $ p = 0.000000113 $. Dado que el valor p es  menor que el umbral de 0.05, podemos decir que hay diferencias estadísticamente significativas en los valores de RMSE entre las técnicas evaluadas. Sin embargo, esta prueba no nos dice cuáles técnicas difieren entre sí. Para ello, realizaremos la prueba post-hoc Wilcoxon \(\alpha = 0.05\) como realizan los autores \cite{julca2023cloud, hoque2021impact, li2017machine}.
+
+\begin{table}[h]
+\caption{Resultados del test de Friedman a las técnicas de hiperparámetros}
+\centering
+\begin{tabular}{rlrrrrl}
+\hline
+.y.   & n   & Statistic & df & P-value     & Method         \\ \hline
+RMSE  & 16  & 32        & 2  & 0.000000113 & Friedman test  \\ \hline
+\end{tabular}
+\label{tab:friedman_test_results_hp1}
+\end{table}
+\small\textit{Fuente:} Elaboración Propia
+\vspace{5mm} 
+
+En la Tabla \ref{tab:post_hoc_comparison_hp1} nos muestran los resultados al aplicar la prueba post-hoc Wilcoxon. Los valores muestran que hay diferencias estadísticamente significativas en los valores de RMSE entre todas las parejas de técnicas evaluadas dado que los valores p son menores al umbral de $0.05$. 
+
+\begin{table}[h]
+\caption{Resultados de la prueba post-hoc Wilcocox a las técnicas de hiperparámetros}
+\label{tab:post_hoc_comparison_hp1}
+\centering
+\begin{tabular}{rp{4cm}p{4cm}lrr} 
+\hline
+.y.   & Group1                & Group2               & {P-value}   & {P.adj}     & {P.adj.signif} \\ \hline
+RMSE  & Bayesian Optimization & Grid search          & 3.05e-5 & 0.0000915 & ****        \\ 
+RMSE  & Bayesian Optimization & Random search        & 3.05e-5 & 0.0000915 & ****        \\ 
+RMSE  & Grid search           & Random search        & 3.05e-5 & 0.0000915 & ****        \\ \hline
+\end{tabular}
+\caption*{\small\textit{Fuente:} Elaboración propia}
+\end{table}
+
+
+
+\subsection{Hipótesis específica: Ensamblado}
+Al realizar la prueba de Shapiro-Wilk, se nota, como se muestra en la Tabla \ref{tab:shapiro_test_results_hp2}, que no todas las técnicas se ajustan a una distribución normal. Por lo tanto, se empleará la prueba de Friedman para determinar si existen diferencias significativas en los valores de RMSE de los distintos modelos, sin requerir que los datos cumplan con una distribución normal.
+
+\begin{table}[H]
+\caption{Resultados de la prueba de Shapiro-Wilk a los modelos producidos por las diferentes técnicas de ensamblado}
+    \centering
+    \begin{tabular}{rllrr}
+    \hline
+        \textbf{Model} & \textbf{Variable} & \textbf{Statistic} & \textbf{P-value} \\ \hline
+        Cosine & RMSE & 0.96 & 0.72 \\ \hline
+        KNN Cosine + KNN MSD + Ensamblado & RMSE & 0.95 & 0.50 \\ \hline
+        KNN Cosine + KNN MSD + Fusion & RMSE & 0.93 & 0.22 \\ \hline
+        KNN Cosine + KNN Pearson + Ensamblado & RMSE & 0.96 & 0.69 \\ \hline
+        KNN Cosine + KNN Pearson + Fusion & RMSE & 0.84 & 0.01 \\ \hline
+        KNN Cosine + NMF + Ensamblado & RMSE & 0.96 & 0.69 \\ \hline
+        KNN Cosine + NMF + Fusion & RMSE & 0.98 & 0.97 \\ \hline
+        KNN Cosine + SVD + Ensamblado & RMSE & 0.88 & 0.04 \\ \hline
+        KNN Cosine + SVD + Fusion & RMSE & 0.94 & 0.33 \\ \hline
+        KNN MSD + NMF + Ensamblado & RMSE & 0.97 & 0.80 \\ \hline
+        KNN MSD + NMF + Fusion & RMSE & 0.94 & 0.32 \\ \hline
+        KNN MSD + SVD + Ensamblado & RMSE & 0.96 & 0.61 \\ \hline
+        KNN MSD + SVD + Fusion & RMSE & 0.94 & 0.38 \\ \hline
+        KNN Pearson + KNN MSD + Ensamblado & RMSE & 0.98 & 0.93 \\ \hline
+        KNN Pearson + KNN MSD + Fusion & RMSE & 0.98 & 0.92 \\ \hline
+        KNN Pearson + NMF + Ensamblado & RMSE & 0.95 & 0.44 \\ \hline
+        KNN Pearson + NMF + Fusion & RMSE & 0.90 & 0.10 \\ \hline
+        KNN Pearson + SVD + Ensamblado & RMSE & 0.97 & 0.82 \\ \hline
+        KNN Pearson + SVD + Fusion & RMSE & 0.92 & 0.17 \\ \hline
+        MSD & RMSE & 0.92 & 0.15 \\ \hline
+        NMF & RMSE & 0.96 & 0.72 \\ \hline
+        Pearson & RMSE & 0.91 & 0.10 \\ \hline
+        SVD & RMSE & 0.97 & 0.77 \\ \hline
+        SVD + NMF + Ensamblado & RMSE & 0.93 & 0.25 \\ \hline
+        SVD + NMF + Fusion & RMSE & 0.96 & 0.72 \\ \hline
+    \end{tabular}
+\label{tab:shapiro_test_results_hp2}
+\caption*{\small\textit{Fuente:} Elaboración propia}
+\end{table}
+
+En los resultados de la prueba de Friedman, presentados en la Tabla \ref{tab:friedman_test_results_hp2}, se destaca un valor p notablemente bajo, específicamente $2.47e-62$. Esto indica la existencia de diferencias significativas desde el punto de vista estadístico en los valores de RMSE entre los distintos modelos evaluados.
+
+\begin{table}[H]
+\caption{Resultados del test de Friedman a las técnicas de ensamblado}
+\centering
+\begin{tabular}{rlrrrrl}
+  \hline
+ & .y. & n & statistic & df & p & method \\ 
+  \hline
+1 & RMSE &  16 & 363.28 & 24 & $2.47e-62$ & Friedman test \\ 
+   \hline
+\end{tabular}
+\label{tab:friedman_test_results_hp2}
+\caption*{\small\textit{Fuente:} Elaboración propia}
+\end{table}
+
+
+
+En la Tabla \ref{tab:post_hoc_comparison_long_hp2} se presentan detalladamente todas las comparaciones efectuadas. Debido a su extensión, se ofrece un resumen en la Tabla \ref{tab:post_hoc_comparison_summary_hp2}. Los resultados obtenidos de la prueba post-hoc de Wilcoxon indican diferencias estadísticamente significativas en los valores de RMSE para todas las combinaciones que incluyen un modelo generado mediante Ensamblado vía Stacking. Estas diferencias se observan en los valores p, que son inferiores al límite establecido de 0,05. En consecuencia, se puede concluir que los modelos desarrollados a través del Ensamblado vía Stacking, utilizando RandomForest como modelo meta, resultan ser los más eficaces.
+
+\begin{table}[H]
+\caption{Resultados de la prueba post-hoc Wilcocox a los modelos de la segunda hipótesis}
+\label{tab:post_hoc_comparison_summary_hp2}
+    \centering
+    \begin{tabular}{rp{4cm}p{4cm}lrr} 
+     \hline
+        .y. & group1 & group2 & p & p.adj & p.adj.signif \\ \hline
+        RMSE & Cosine & KNN Cosine + KNN MSD + Ensamblado & 3.05E-05 & 0.009 & ** \\ \hline
+        RMSE & Cosine & KNN Cosine + KNN Pearson +Ensamblado & 3.05E-05 & 0.009 & ** \\ \hline
+        RMSE & Cosine & KNN Cosine + NMF + Ensamblado & 3.05E-05 & 0.009 & ** \\ \hline
+        RMSE & Cosine & KNN Cosine + SVD + Ensamblado & 3.05E-05 & 0.009 & ** \\ \hline
+        RMSE & Cosine & KNN Pearson + KNN MSD + Ensamblado  & 3.05E-05 & 0.009 & ** \\ \hline
+        RMSE & KNN Cosine + KNN MSD + Ensamblado & KNN Cosine + KNN MSD + Fusion & 3.05E-05 & 0.009 & ** \\ \hline
+    \end{tabular}
+    \caption*{\small\textit{Fuente:} Elaboración propia}
+\end{table}
+
+\subsection{Hipótesis específica: Balanceo}
+
+Al realizar la prueba de Shapiro-Wilk, se prueba, como se muestra en la Tabla \ref{tab:shapiro_test_results_hp3}, que no todos los modelos siguen una distribución normal. Luego,al aplicar la prueba de Friedman se determina que existen diferencias significativas en los valores de RMSE de los distintos modelos como podemos observar en la Tabla \ref{tab:friedman_test_results_hp3} \\
+
+
+\begin{table}[H]
+\caption{Resultados de la prueba de Shapiro-Wilk a los modelos con sus variantes de balanceo en el dataset de NinjaCoding}
+\label{tab:shapiro_test_results_hp3}
+\centering
+\begin{tabular}{rllrr}
+    \hline
+        model & variable & statistic & p \\ \hline
+        KNN Cosine + KNN MSD + Ensamblado + OverSampler & RMSE & 0.98 & 0.96 \\ \hline
+        KNN Cosine + KNN MSD + Ensamblado + Sin Balanceo & RMSE & 0.95 & 0.50 \\ \hline
+        KNN Cosine + KNN MSD + Ensamblado + UnderSampler & RMSE & 0.99 & 1.00 \\ \hline
+        KNN Cosine + KNN Pearson + Ensamblado + OverSampler & RMSE & 0.93 & 0.26 \\ \hline
+        KNN Cosine + KNN Pearson + Ensamblado + Sin Balanceo & RMSE & 0.97 & 0.87 \\ \hline
+        KNN Cosine + KNN Pearson + Ensamblado + UnderSampler & RMSE & 0.98 & 0.97 \\ \hline
+        KNN Cosine + NMF + Ensamblado + OverSampler & RMSE & 0.93 & 0.25 \\ \hline
+        KNN Cosine + NMF + Ensamblado + Sin Balanceo & RMSE & 0.97 & 0.82 \\ \hline
+        KNN Cosine + NMF + Ensamblado + UnderSampler & RMSE & 0.91 & 0.12 \\ \hline
+        KNN Cosine + SVD + Ensamblado + OverSampler & RMSE & 0.86 & 0.02 \\ \hline
+        KNN Cosine + SVD + Ensamblado + Sin Balanceo & RMSE & 0.89 & 0.06 \\ \hline
+        KNN Cosine + SVD + Ensamblado + UnderSampler & RMSE & 0.93 & 0.22 \\ \hline
+        KNN MSD + NMF + Ensamblado + OverSampler & RMSE & 0.92 & 0.14 \\ \hline
+        KNN MSD + NMF + Ensamblado + Sin Balanceo & RMSE & 0.94 & 0.39 \\ \hline
+        KNN MSD + NMF + Ensamblado + UnderSampler & RMSE & 0.92 & 0.20 \\ \hline
+        KNN MSD + SVD + Ensamblado + OverSampler & RMSE & 0.92 & 0.15 \\ \hline
+        KNN MSD + SVD + Ensamblado + Sin Balanceo & RMSE & 0.96 & 0.71 \\ \hline
+        KNN MSD + SVD + Ensamblado + UnderSampler & RMSE & 0.98 & 0.94 \\ \hline
+        KNN Pearson + KNN MSD + Ensamblado + OverSampler & RMSE & 0.98 & 0.99 \\ \hline
+        KNN Pearson + KNN MSD + Ensamblado + Sin Balanceo & RMSE & 0.93 & 0.28 \\ \hline
+        KNN Pearson + KNN MSD + Ensamblado + UnderSampler & RMSE & 0.94 & 0.35 \\ \hline
+        KNN Pearson + NMF + Ensamblado + OverSampler & RMSE & 0.87 & 0.03 \\ \hline
+        KNN Pearson + NMF + Ensamblado + Sin Balanceo & RMSE & 0.93 & 0.25 \\ \hline
+        KNN Pearson + NMF + Ensamblado + UnderSampler & RMSE & 0.95 & 0.48 \\ \hline
+        KNN Pearson + SVD + Ensamblado + OverSampler & RMSE & 0.94 & 0.32 \\ \hline
+        KNN Pearson + SVD + Ensamblado + Sin Balanceo & RMSE & 0.86 & 0.02 \\ \hline
+        KNN Pearson + SVD + Ensamblado + UnderSampler & RMSE & 0.96 & 0.70 \\ \hline
+        SVD + NMF + Ensamblado + OverSampler & RMSE & 0.97 & 0.80 \\ \hline
+        SVD + NMF + Ensamblado + Sin Balanceo & RMSE & 0.88 & 0.04 \\ \hline
+        SVD + NMF + Ensamblado + UnderSampler & RMSE & 0.97 & 0.88 \\ \hline
+    \end{tabular}
+\caption*{\small\textit{Fuente:} Elaboración propia}
+\end{table}
+
+\begin{table}[H]
+\caption{Resultados de la prueba de Friedman a los modelos con sus variantes de balanceo}
+\label{tab:friedman_test_results_hp3}
+\centering
+\begin{tabular}{rlrrrrl}
+ \hline
+ & .y. & n & statistic & df & p & method \\ 
+  \hline
+1 & RMSE &  16 & 170.54 & 29.00 & 5.53e-22 & Friedman test \\ 
+   \hline
+\end{tabular}
+\caption*{\small\textit{Fuente:} Elaboración propia}
+\end{table}
+
+En la Tabla \ref{tab:post_hoc_comparison_summary_hp3_ninjacoding_1} y \ref{tab:post_hoc_comparison_summary_hp3_ninjacoding_2}, se comprueba que no hay una diferencia significativa al aplicar Balanceo de clases en los modelos generados por Ensamblado vía RandomForest.
+
+Por lo tanto, considerando que los resultados muestran la ausencia de diferencias significativas tras la implementación del balanceo, procedemos a aceptar que el balanceo de datos no ejerce un impacto considerable en la eficacia de los modelos.
+
+\begin{table}[H]
+\caption{Resultados de la prueba post-hoc Wilcoxon a los modelos con y sin balanceo parte 1 de 2}
+\label{tab:post_hoc_comparison_summary_hp3_ninjacoding_1}
+    \centering
+    \begin{tabular}{rp{4cm}p{4cm}rlrr} 
+    \hline
+        .y. & group1 & group2 & statistic & p & p.adj & p.adj.signif \\ \hline
+        RMSE & KNN Cosine + KNN Pearson + Ensamblado + OverSampler & KNN Cosine + KNN Pearson + Ensamblado + Sin Balanceo & 73 & 0.82 & 1.00 & ns \\ \hline
+        RMSE & KNN Cosine + KNN Pearson + Ensamblado + OverSampler & KNN Cosine + KNN Pearson + Ensamblado + UnderSampler & 75 & 0.74 & 1.00 & ns \\ \hline
+        RMSE & KNN Cosine + KNN Pearson + Ensamblado + Sin Balanceo & KNN Cosine + KNN Pearson + Ensamblado + UnderSampler & 51 & 0.40 & 1.00 & ns \\ \hline
+        RMSE & KNN Cosine + KNN MSD + Ensamblado + OverSampler & KNN Cosine + KNN MSD + Ensamblado + Sin Balanceo & 56 & 0.56 & 1.00 & ns \\ \hline
+        RMSE & KNN Cosine + KNN MSD + Ensamblado + OverSampler & KNN Cosine + KNN MSD + Ensamblado + UnderSampler & 38 & 0.13 & 0.39 & ns \\ \hline
+        RMSE & KNN Cosine + KNN MSD + Ensamblado + Sin Balanceo & KNN Cosine + KNN MSD + Ensamblado + UnderSampler & 49 & 0.35 & 1.00 & ns \\ \hline
+        RMSE & KNN Cosine + SVD + Ensamblado + OverSampler & KNN Cosine + SVD + Ensamblado + Sin Balanceo & 99 & 0.12 & 0.35 & ns \\ \hline
+        RMSE & KNN Cosine + SVD + Ensamblado + OverSampler & KNN Cosine + SVD + Ensamblado + UnderSampler & 99 & 0.12 & 0.35 & ns \\ \hline
+        RMSE & KNN Cosine + SVD + Ensamblado + Sin Balanceo & KNN Cosine + SVD + Ensamblado + UnderSampler & 52 & 0.43 & 1.00 & ns \\ \hline
+        RMSE & KNN Cosine + NMF + Ensamblado + OverSampler & KNN Cosine + NMF + Ensamblado + Sin Balanceo & 61 & 0.74 & 1.00 & ns \\ \hline
+        RMSE & KNN Cosine + NMF + Ensamblado + OverSampler & KNN Cosine + NMF + Ensamblado + UnderSampler & 41 & 0.18 & 0.53 & ns \\ \hline
+        RMSE & KNN Cosine + NMF + Ensamblado + Sin Balanceo & KNN Cosine + NMF + Ensamblado + UnderSampler & 52 & 0.43 & 1.00 & ns \\ \hline
+        RMSE & KNN Pearson + KNN MSD + Ensamblado + OverSampler & KNN Pearson + KNN MSD + Ensamblado + Sin Balanceo & 56 & 0.56 & 1.00 & ns \\ \hline
+        RMSE & KNN Pearson + KNN MSD + Ensamblado + OverSampler & KNN Pearson + KNN MSD + Ensamblado + UnderSampler & 66 & 0.94 & 1.00 & ns \\ \hline
+        RMSE & KNN Pearson + KNN MSD + Ensamblado + Sin Balanceo & KNN Pearson + KNN MSD + Ensamblado + UnderSampler & 57 & 0.60 & 1.00 & ns \\ \hline
+    \end{tabular}
+    \caption*{\small\textit{Fuente:} Elaboración propia}
+\end{table}
+
+\begin{table}[H]
+\caption{Resultados de la comparación post-hoc Wilcoxon de los modelos con y sin Balanceo parte 2 de 2}
+\label{tab:post_hoc_comparison_summary_hp3_ninjacoding_2}
+    \centering
+    \begin{tabular}{rp{4cm}p{4cm}rlrr} 
+    \hline
+        .y. & group1 & group2 & statistic & p & p.adj & p.adj.signif \\ \hline
+        RMSE & KNN Pearson + SVD + Ensamblado + OverSampler & KNN Pearson + SVD + Ensamblado + Sin Balanceo & 68 & 1.00 & 1.00 & ns \\ \hline
+        RMSE & KNN Pearson + SVD + Ensamblado + OverSampler & KNN Pearson + SVD + Ensamblado + UnderSampler & 78 & 0.63 & 1.00 & ns \\ \hline
+        RMSE & KNN Pearson + SVD + Ensamblado + Sin Balanceo & KNN Pearson + SVD + Ensamblado + UnderSampler & 72 & 0.86 & 1.00 & ns \\ \hline
+        RMSE & KNN Pearson + NMF + Ensamblado + OverSampler & KNN Pearson + NMF + Ensamblado + Sin Balanceo & 68 & 1.00 & 1.00 & ns \\ \hline
+        RMSE & KNN Pearson + NMF + Ensamblado + OverSampler & KNN Pearson + NMF + Ensamblado + UnderSampler & 72 & 0.86 & 1.00 & ns \\ \hline
+        RMSE & KNN Pearson + NMF + Ensamblado + Sin Balanceo & KNN Pearson + NMF + Ensamblado + UnderSampler & 75 & 0.74 & 1.00 & ns \\ \hline
+        RMSE & KNN MSD + SVD + Ensamblado + OverSampler & KNN MSD + SVD + Ensamblado + Sin Balanceo & 74 & 0.78 & 1.00 & ns \\ \hline
+        RMSE & KNN MSD + SVD + Ensamblado + OverSampler & KNN MSD + SVD + Ensamblado + UnderSampler & 76 & 0.71 & 1.00 & ns \\ \hline
+        RMSE & KNN MSD + SVD + Ensamblado + Sin Balanceo & KNN MSD + SVD + Ensamblado + UnderSampler & 65 & 0.90 & 1.00 & ns \\ \hline
+        RMSE & KNN MSD + NMF + Ensamblado + OverSampler & KNN MSD + NMF + Ensamblado + Sin Balanceo & 47 & 0.30 & 0.89 & ns \\ \hline
+        RMSE & KNN MSD + NMF + Ensamblado + OverSampler & KNN MSD + NMF + Ensamblado + UnderSampler & 39 & 0.14 & 0.43 & ns \\ \hline
+        RMSE & KNN MSD + NMF + Ensamblado + Sin Balanceo & KNN MSD + NMF + Ensamblado + UnderSampler & 55 & 0.53 & 1.00 & ns \\ \hline
+        RMSE & SVD + NMF + Ensamblado + OverSampler & SVD + NMF + Ensamblado + Sin Balanceo & 69 & 0.98 & 1.00 & ns \\ \hline
+        RMSE & SVD + NMF + Ensamblado + OverSampler & SVD + NMF + Ensamblado + UnderSampler & 61 & 0.74 & 1.00 & ns \\ \hline
+        RMSE & SVD + NMF + Ensamblado + Sin Balanceo & SVD + NMF + Ensamblado + UnderSampler & 62 & 0.78 & 1.00 & ns \\ \hline
+    \end{tabular}
+    \caption*{\small\textit{Fuente:} Elaboración propia}
+\end{table}
